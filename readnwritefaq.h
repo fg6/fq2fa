@@ -20,6 +20,33 @@ static  vector<string> rcomment;
 static std::ofstream myfile;
 
 
+string myrename(string myname, string addthis, string exte=""){
+
+  size_t pos = 0;
+  string token;
+  string delimiter = "/";
+
+  while ((pos = myname.find(delimiter)) != std::string::npos) {
+    token = myname.substr(0, pos);
+    myname.erase(0, pos + delimiter.length());
+  }
+
+  pos=0;
+  myname= addthis + "_" + myname;
+
+  if(exte.size()){  //change file extension
+    token=myname;
+    pos   = token.find_last_of(".");
+    if (pos != std::string::npos) {	
+	token.erase(pos,myname.size());
+   }
+   myname=token+exte;
+  }
+
+  return(myname);
+}
+
+
 
 // ---------------------------------------- //
 int fasttype(char* file)
