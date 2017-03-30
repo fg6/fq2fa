@@ -3,7 +3,7 @@
 #include <vector>  //setprecision
 #include <iostream>
 #include <fstream>
-
+#include <sstream>
 
 using std::cout;
 using std::endl;
@@ -17,6 +17,7 @@ static  vector<string> rqual;
 static  vector<string> rname;
 static  vector<string> rcomment;
 static std::ofstream myfile;
+
 
 bool fexists(const std::string& filename) {
   std::ifstream ifile(filename.c_str());
@@ -69,17 +70,26 @@ int fasttype(char* file)
   return(isfq);
 }
 
+// numeric to string
+template <class T>
+inline std::string to_string (const T& t)
+{
+  std::stringstream ss;
+  ss << t;
+  return ss.str();
+}
 
 // ---------------------------------------- //
-int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen=0, string selctg="")
+int readfastq(char* file, int saveinfo=0, int write=0,  int pbformat=0)
 // ---------------------------------------- // // write = 1:fa, 2:fq
 { 
+  
   std::ifstream infile(file);
   char fq[5]={"@"};
   char fa[5]={">"};
   char plus[5]={"+"};
   int nseq=0;
-
+  int readseq=0;
  
   rlen.reserve(100000);
   rname.reserve(100000);
@@ -97,7 +107,7 @@ int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen
   int quallen=0;
   string lqual;
   int seqlines=0;
-
+  int minlen=0;
 
   int stop=1;
   while(stop){
@@ -116,6 +126,9 @@ int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen
 	    if(readseq)rseq.push_back(lseq);
 	    if(readseq)rqual.push_back(lqual);
 	  }
+
+	  if(pbformat) lname=lname.substr(0,lname.size()-1) + "/" + to_string(nseq-1) + "/0_" + to_string(seqlen) + " RQ=0.8";
+	  
 
 	  if(write){
 	    if(write==1){
@@ -153,7 +166,7 @@ int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen
       }else{
 	lname=read.erase(0,1);
       }
-
+      
       lseq="";
       lqual="";
 
@@ -185,6 +198,8 @@ int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen
 	  if(readseq)rqual.push_back(lqual);
 	}
 
+	  if(pbformat) lname=lname.substr(0,lname.size()-1) + "/" + to_string(nseq) + "/0_" + to_string(seqlen) + " RQ=0.8";
+	  
 	  if(write){
 	    if(write==1){
 	      myfile << fa << lname ;
