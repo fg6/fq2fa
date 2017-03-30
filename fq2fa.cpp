@@ -1,8 +1,5 @@
 #include "readnwritefaq.h"
 
-
-
-//int readseqs(void);
 int calc(void);
 int myread(char* file);
 
