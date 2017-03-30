@@ -13,7 +13,11 @@ int main(int argc, char *argv[])
     printf("ERROR main:: missing input file  !! \n");
     return 1;
   } 
- 
+  int pbformat=0;
+  if (argc == 3) {
+    pbformat=atoi(argv[2]);
+  }
+
   string myname=myrename(argv[1],".fasta");
   int err=1;
 
@@ -24,7 +28,7 @@ int main(int argc, char *argv[])
     cout << " Error! not a fastq file! "<<endl;
   else{
      myfile.open(myname);  
-     err=readfastq(argv[1],0,1);
+     err=readfastq(argv[1],0,1,pbformat);
      myfile.close();
  }
 
