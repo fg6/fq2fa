@@ -8,7 +8,7 @@ INCLUDES =
 LIBS =  
 
 CFLAGS= -c  $(INCLUDES) 
-COMPILE = $(CC) $(CFLAGS)
+COMPILE = $(CC)  -std=c++11 $(CFLAGS)
 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=$(SOURCES:.cpp=)
