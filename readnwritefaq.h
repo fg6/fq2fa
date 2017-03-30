@@ -1,9 +1,8 @@
 #include <iomanip>  //setprecision
 #include <algorithm>    // sort, reverse
-#include <gzstream.h>
 #include <vector>  //setprecision
-//#include <iostream>
-//#include <fstream>
+#include <iostream>
+#include <fstream>
 
 
 using std::cout;
@@ -11,7 +10,7 @@ using std::endl;
 using std::vector;
 using std::string;
 
-static gzFile fp;
+//static gzFile fp;
 static  vector<int> rlen;
 static  vector<string> rseq;
 static  vector<string> rqual;
@@ -19,8 +18,12 @@ static  vector<string> rname;
 static  vector<string> rcomment;
 static std::ofstream myfile;
 
+bool fexists(const std::string& filename) {
+  std::ifstream ifile(filename.c_str());
+  return (bool)ifile;
+}
 
-string myrename(string myname, string addthis, string exte=""){
+string myrename(string myname, string exte=""){
 
   size_t pos = 0;
   string token;
@@ -32,7 +35,6 @@ string myrename(string myname, string addthis, string exte=""){
   }
 
   pos=0;
-  myname= addthis + "_" + myname;
 
   if(exte.size()){  //change file extension
     token=myname;
@@ -56,12 +58,13 @@ int fasttype(char* file)
   char fa[5]={">"};
   string ttname;
   int isfq=0;
-  igzstream infile(file);
+  std::ifstream infile(file);
 
   getline(infile,ttname);
   string ftype=ttname.substr(0,1);
   if(ftype==fa) isfq=0;
   else isfq=1;
+
 
   return(isfq);
 }
@@ -71,7 +74,7 @@ int fasttype(char* file)
 int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen=0, string selctg="")
 // ---------------------------------------- // // write = 1:fa, 2:fq
 { 
-  igzstream infile(file);
+  std::ifstream infile(file);
   char fq[5]={"@"};
   char fa[5]={">"};
   char plus[5]={"+"};
@@ -210,91 +213,3 @@ int readfastq(char* file, int saveinfo=0, int write=0, int readseq=0, int minlen
  
   return 0;
 }
-
-
-// ---------------------------------------- //
-int readfasta(char* file, int saveinfo=0, int readseq=0, int minlen=0, string selctg="")
-// ---------------------------------------- //
-{ 
-  igzstream infile(file);
-  char fa[5]={">"};
-  int nseq=0;
-
-  rlen.reserve(100000);
-  rname.reserve(100000);
-  if(readseq)
-    rseq.reserve(100000);
-
-
-  string read;
-  string lname;
-  string lcomment="";   
-  string lseq="";
-  int seqlen=0;
-
-  int stop=1;
-  while(stop){
-    getline(infile,read);
-    
-    if(read.substr(0,1)==fa){  // name
-      nseq++;
-
-      if(nseq>1){ // previous
-	if(seqlen>=minlen){
-
-	  if(saveinfo){
-	    rname.push_back(lname);
-	    rlen.push_back(seqlen);
-	    if(readseq)rseq.push_back(lseq);
-	    if(lcomment.size())rcomment.push_back(lcomment);
-	  }
-
-
-	}
-      }
-      
-      size_t ns=0;
-      size_t nt=0;
-      ns=read.find(" ");
-      nt=read.find("\t");
-
-      if(ns!=std::string::npos) { 
-	lname=read.substr(1,ns);
-	lcomment=read.substr(ns+1,read.size());
-      }else if(nt!=std::string::npos) {
-	lname=read.substr(1,nt);
-	lcomment=read.substr(nt+1,read.size());
-      }else{
-	lname=read.erase(0,1);
-      }
-      lseq="";
-      seqlen=0;
-
-    }else{ // sequence 
-      lseq.append(read);
-      seqlen+=read.size();
-    }
- 
-    // EOF
-    if(infile.eof()){ // previous
-      if(seqlen>=minlen){
-
-
-	if(saveinfo){
-	  rname.push_back(lname);
-	  rlen.push_back(seqlen);
-	  if(readseq)rseq.push_back(lseq);
-	  if(lcomment.size())rcomment.push_back(lcomment);
-	}      
-
-
-      }
-      stop=0;
-    }
-
-
-  }//read loop
- 
-  return 0;
-}
-
