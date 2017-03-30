@@ -1,8 +1,5 @@
 #include "readnwritefaq.h"
 
-int calc(void);
-int myread(char* file);
-
 int main(int argc, char *argv[])
 { 
 
@@ -10,12 +7,14 @@ int main(int argc, char *argv[])
    fprintf(stderr, "Usage: %s <reads.fq/fa>\n", argv[0]);
    return 1;
   }	
-  if((fp = gzopen(argv[1],"r")) == NULL){ 
+
+  std::ifstream file(argv[1]);  
+  if ( ! fexists(argv[1]) ){
     printf("ERROR main:: missing input file  !! \n");
     return 1;
-  }
-
-  string myname=myrename(argv[1],"fq2fa",".fasta");
+  } 
+ 
+  string myname=myrename(argv[1],".fasta");
   int err=1;
 
   // File type  
