@@ -133,12 +133,12 @@ int readfastq(char* file, int saveinfo=0, int write=0,  int pbformat=0)
 	  if(write){
 	    if(write==1){
 	      myfile << fa << lname ;
-	      if(lcomment.size()) myfile << lcomment <<endl;
+	      if(lcomment.size() && !pbformat) myfile << lcomment <<endl;
 	      else myfile << endl;
 	      myfile << lseq << endl;
 	    }else if(lqual.size()){
 	      myfile << fq << lname ;
-	      if(lcomment.size()) myfile << lcomment <<endl;
+	      if(lcomment.size() && !pbformat) myfile << lcomment <<endl;
 	      else myfile << endl;
 	      myfile << lseq << endl;
 	      myfile << "+" << endl << lqual << endl;
@@ -203,12 +203,12 @@ int readfastq(char* file, int saveinfo=0, int write=0,  int pbformat=0)
 	  if(write){
 	    if(write==1){
 	      myfile << fa << lname ;
-	      if(lcomment.size()) myfile << lcomment <<endl;
+	      if(lcomment.size() && !pbformat) myfile << lcomment <<endl;
 	      else myfile << endl;
 	      myfile << lseq << endl;
 	    }else if(lqual.size()){
 	      myfile << fq << lname ;
-	      if(lcomment.size()) myfile << lcomment <<endl;
+	      if(lcomment.size() && !pbformat) myfile << lcomment <<endl;
 	      else myfile << endl;
 	      myfile << lseq << endl;
 	      myfile << "+" << endl << lqual << endl;
